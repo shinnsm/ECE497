@@ -47,4 +47,4 @@ A multi-colored LED is used to provide visual feedback. If the potentiometer val
 the LED blinks red. If neither case is met, the LED is not illuminated.
 
 Neither of our BeagleBone's had working PWM support. Enabling PWM caused an SSH logout and we could not figure out the problem.
-A suggestion was posted to SharePoint which I plan to try but have not done so by the time of this commit.
+A suggestion was posted to the Google group which I plan to try but have not done so by the time of this commit.
