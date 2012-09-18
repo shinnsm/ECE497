@@ -102,6 +102,17 @@ void writeToLed(int ledNumber, int numToWrite) {
 	fclose(file);
 }
 
+// Set the PWM frequency to the potentiometer value
+// divided by 200.
+void processPwm(int analog) {
+	FILE *file;
+	file = fopen("/sys/class/pwm/ehrpwm.1\:0/period_freq","w+");
+	int analogValue = analog/200;
+	fprintf(file,"%d",analogValue);
+	fclose (file);
+	printf("PWM frequency: %d\n", analogValue);
+}
+
 // Takes a temperature in F and analog value (0 to 4096)
 // and uses those values to change the output LED's.
 // If the temp > 75, the multi-colored LED lights red.
@@ -136,13 +147,11 @@ void processNums(int temp, int analog) {
 // Return value as int.
 int readAnalog()
 {
-  FILE* file = fopen("/sys/devices/platform/tsc/ain6", "r");
-  
+  FILE* file = fopen("/sys/devices/platform/omap/tsc/ain5", "r");
   int num = 0;
   fscanf (file, "%d", &num);
   fclose (file);
-
-  printf("Potentiometer num: %d", num);
+  printf("Potentiometer num: %d\n", num);
   return num;
 }
 
@@ -438,7 +447,7 @@ int main(int argc, char **argv, char **envp)
 		rc = poll(fdset, nfds, timeout);      
 
 		if (rc < 0) {
-			printf("\npoll() failed!\n");
+			printf("\nGoodbye!\n");
 			return -1;
 		}
       
@@ -462,8 +471,9 @@ int main(int argc, char **argv, char **envp)
 			temp = readTemp();
 			analog = readAnalog();
 
-			// Call the function to manage the values
+			// Call the functions to manage the values
 			processNums(temp, analog);
+			processPwm(analog);
 		}
 
 		if (fdset[0].revents & POLLIN) {

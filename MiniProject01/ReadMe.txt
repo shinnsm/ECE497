@@ -29,6 +29,9 @@ Multi-colored LED:
 	Red: Pin 15 (GPIO1_16)
 	Blue: Pin 23 (GPIO1_17)
 
+PWM LED:
+	Pin 14 (EHRPWM1A)
+
 == Usage ==
 General:	./miniProj1 <square wave gpio> <interrupt LED gpio>
 Recommended:	./miniProj1 60 7
@@ -38,13 +41,12 @@ Recommended:	./miniProj1 60 7
 	On each interrupt, the current temperature in Fahrenheit and potentiometer value is printed.
 2. The interrupt LED blinks each time an interrupt occurs. Change the square wave frequency to alter the
 	speed of this LED (gpio output).
-3. The temperature is read from our censor on each interrupt and converted to Fahrenheit.
-4. A potentiometer is also read and the value is given from 0 to 4096.
-5. On a ^C interrupt, the program shuts down.
+3. The potentiometer value divided by 200 is set to the frequency of the PWM, which blinks an LED.
+4. The temperature is read from our censor on each interrupt and converted to Fahrenheit.
+5. A potentiometer is also read and the value is given from 0 to 4096.
+6. On a ^C interrupt, the program shuts down.
 
 A multi-colored LED is used to provide visual feedback. If the potentiometer value is between 2000 and
 3000, this LED blinks blue. If the temperature censor reads greater than 75 degrees Fahrenheit, 
-the LED blinks red. If neither case is met, the LED is not illuminated.
-
-Neither of our BeagleBone's had working PWM support. Enabling PWM caused an SSH logout and we could not figure out the problem.
-A suggestion was posted to the Google group which I plan to try but have not done so by the time of this commit.
+the LED blinks red. If neither case is met, the LED is not illuminated. The potentiometer value
+determines the period of the PWM output, which blinks an LED at that period.
