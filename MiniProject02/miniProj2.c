@@ -13,6 +13,8 @@ Result: LED lights-up when a strong force is placed on the resistor.
 #include <string.h>
 #include <unistd.h>
 
+#define SYSFS_GPIO_DIR "/sys/class/gpio"
+
 // Read analog value
 int readAnalog() {
 	FILE* file = fopen("/sys/devices/platform/omap/tsc/ain6", "r");
@@ -40,10 +42,27 @@ void lightLedIfStrong(analogValue) {
 
 // Main
 void main(int argc, char **argv, char **envp) {
+
+	// Export gpio60
+	FILE *fp;
+	char set_value[5];
+	fp = fopen(SYSFS_GPIO_DIR "/export", "ab");
+	rewind(fp);
+	strcpy(set_value, "60");
+	fwrite(&set_value, sizeof(char), 2, fp);
+	fclose(fp);
+
+	// Set gpio60 direction
+	FILE *file;
+	file = fopen("/sys/class/gpio/gpio60/direction","w+");
+	fprintf(file,"%s","out");
+	fclose(file);
+	
+	// Keep going; CTRL+C to exit
 	while (1) {
 		int analogValue = readAnalog();
 
-		//Do anything based on analog value
+		// Do anything based on analog value
 		lightLedIfStrong(analogValue);
 
 		sleep(0.5);
